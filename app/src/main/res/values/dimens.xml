@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Main Activity Dimensions-->
+    <dimen name="progress_bar_dimension">42dp</dimen>
+    <dimen name="poster_width">200dp</dimen>
+    <dimen name="poster_height">300dp</dimen>
+    <dimen name="cardView_Radius">4dp</dimen>
+    <dimen name="cardView_elevation">1dp</dimen>
+
+    <!-- Details Layout Dimensions-->
+    <dimen name="detail_margin_start">8dp</dimen>
+    <dimen name="detail_backdrop_height">200dp</dimen>
+    <dimen name="detail_poster_height">300dp</dimen>
+    <dimen name="detail_poster_width">100dp</dimen>
+    <dimen name="releaseDate_margin_top">42dp</dimen>
+    <dimen name="textViews_margin_top">16dp</dimen>
+    <dimen name="poster_margin">32dp</dimen>
+    <dimen name="poster_margin_top">42dp</dimen>
+</resources>
