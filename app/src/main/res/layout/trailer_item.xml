@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/tools"
@@ -10,15 +10,15 @@
     <android.support.v7.widget.CardView
         android:id="@+id/video_cardView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
         app:cardCornerRadius="@dimen/cardView_Radius"
         app:cardElevation="@dimen/cardView_elevation"
         app:cardUseCompatPadding="true"
         card_view:cardUseCompatPadding="true">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <ImageView
@@ -32,6 +32,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/video_title"
+            android:gravity="center"
+            android:padding="16dp"
             tools:text="@string/video_title"/>
         </LinearLayout>
 

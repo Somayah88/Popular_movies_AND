@@ -1,6 +1,7 @@
 package com.somayahalharbi.popular_movies;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -56,6 +57,10 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
         videoRecyclerView.setLayoutManager(videoLayoutManager);
         trailerAdapter=new TrailerAdapter(this);
         videoRecyclerView.setAdapter(trailerAdapter);
+        GridLayoutManager reviewLayoutManager= new GridLayoutManager(this,1,GridLayoutManager.VERTICAL,false);
+        reviewsRecyclerView.setLayoutManager(reviewLayoutManager);
+        reviewAdapter=new ReviewAdapter();
+        reviewsRecyclerView.setAdapter(reviewAdapter);
         Intent intent = getIntent();
         if (intent == null) {
             closeOnError();
@@ -83,6 +88,8 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
         mReleaseDateTextView.setText(movie.getRelease_date());
         Picasso.with(this).load("http://image.tmdb.org/t/p/w500/" + movie.getBackDropImg()).into(mMovieImageView);
         Picasso.with(this).load("http://image.tmdb.org/t/p/w185/" + movie.getImage()).into(mMoviePosterImageView);
+        showTrailers(movie.getId());
+        showReviews(movie.getId());
 
 
     }
@@ -94,17 +101,20 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
     private void showTrailers(String id){
         String apiKey = this.getResources().getString(R.string.api_key);
         URL url = NetworkUtils.buildQueryURL(id,"videos", apiKey);
-        new ReviewsApiQuery(this).execute(url);
+        new TrailersApiQuery(this).execute(url);
 
     }
     private void showReviews(String id){
         String apiKey = this.getResources().getString(R.string.api_key);
         URL url = NetworkUtils.buildQueryURL(id,"reviews", apiKey);
+        new ReviewsApiQuery(this).execute(url);
 
     }
 
     @Override
     public void onClick(String key) {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube://"+key)));
+
 
     }
     private static class TrailersApiQuery extends AsyncTask<URL, Void, String> {
