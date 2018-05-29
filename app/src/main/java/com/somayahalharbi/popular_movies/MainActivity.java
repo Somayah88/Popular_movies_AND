@@ -16,7 +16,9 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.somayahalharbi.popular_movies.model.Movie;
+
+import com.somayahalharbi.popular_movies.adapters.MovieAdapter;
+import com.somayahalharbi.popular_movies.models.Movie;
 import com.somayahalharbi.popular_movies.utilities.JSONUtils;
 import com.somayahalharbi.popular_movies.utilities.NetworkUtils;
 import java.io.IOException;
@@ -159,6 +161,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             mMovieAdapter.clear();
             loadMovieData(sortType);
             return true;
+        }
+        if (id== R.id.favorite)
+        {
+            // get the favorite movies from the db
         }
 
         return super.onOptionsItemSelected(item);

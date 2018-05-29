@@ -18,6 +18,7 @@ public class NetworkUtils {
 
 
 
+
     public static URL buildURL(String sortOption, String apiKey){
 
         Uri builtUri=Uri.parse(BASE_URL).buildUpon().appendPath(sortOption).appendQueryParameter(PARAM_API_KEY, apiKey ).build();
@@ -30,6 +31,18 @@ public class NetworkUtils {
 
         return url;
 
+    }
+    public static URL buildQueryURL(String id, String queryParam, String apiKey)
+    {
+        Uri builtUri=Uri.parse(BASE_URL).buildUpon().appendPath(id).appendPath(queryParam).appendQueryParameter(PARAM_API_KEY,apiKey).build();
+        URL url=null;
+        try{
+            url=new URL(builtUri.toString());
+        }
+        catch (MalformedURLException e){
+            e.printStackTrace();
+        }
+        return url;
     }
 
     public static String getResponseFromHttpUrl(URL url) throws IOException {

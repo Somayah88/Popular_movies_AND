@@ -1,4 +1,4 @@
-package com.somayahalharbi.popular_movies.model;
+package com.somayahalharbi.popular_movies.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -12,6 +12,10 @@ public class Movie implements Parcelable {
     private String release_date;
     private float rating;
     private String backDropImg;
+    private String id;
+
+
+
 
 
 
@@ -19,7 +23,7 @@ public class Movie implements Parcelable {
 
     }
 
-  public Movie(String title, String img, String overview, String releaseDate, float rating ,String backDrop){
+  public Movie(String title, String img, String overview, String releaseDate, float rating ,String backDrop, String id){
 
      this.title=title;
      this.image=img;
@@ -27,6 +31,7 @@ public class Movie implements Parcelable {
      this.release_date=releaseDate;
      this.rating=rating;
      this.backDropImg=backDrop;
+     this.id=id;
 
  }
  private Movie(Parcel in)
@@ -37,6 +42,7 @@ public class Movie implements Parcelable {
      this.release_date=in.readString();
      this.rating=in.readFloat();
      this.backDropImg=in.readString();
+     this.id=in.readString();
 
  }
     public void setTitle(String title) {
@@ -85,6 +91,15 @@ public class Movie implements Parcelable {
         return backDropImg;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+
 
 
 
@@ -101,6 +116,7 @@ public class Movie implements Parcelable {
       dest.writeString(release_date);
       dest.writeFloat(rating);
       dest.writeString(backDropImg);
+      dest.writeString(id);
 
 
     }

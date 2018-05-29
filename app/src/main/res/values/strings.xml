@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">Popular Movies</string>
+                  <!-- Menu Items-->
     <string name="most_popular">Most popular</string>
     <string name="top_rated"> Top Rated</string>
+    <string name="favorites">Favorites</string>
+
     <string name="image_description">Description Not Available</string>
                    <!--Details Activity Texts-->
     <string name="rating_default">N/A</string>
@@ -10,6 +13,8 @@
     <string name="rating_title">Rating: </string>
     <string name="overview_title">Overview: </string>
     <string name="releaseDate_title">Release Date: </string>
+    <string name="video_title">Video Title is Not Available</string>
+    <string name="not_available">N/A</string>
 
 
     <!-- Error Messages -->
