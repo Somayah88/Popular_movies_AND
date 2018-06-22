@@ -51,6 +51,29 @@ public class JSONUtils {
 
         return moviesList;
     }
+    public static Movie parseOneMovie(String response)
+    {
+        Movie movie=null;
+        try{
+            JSONObject movieResponse=new JSONObject(response);
+            String avgRating=movieResponse.optString("vote_average");
+            String id=movieResponse.optString("id");
+            String img=movieResponse.optString("poster_path");
+            String title=movieResponse.optString("original_title");
+            String overview=movieResponse.optString("overview");
+            String release_date=movieResponse.optString("release_date");
+            String backDropImage=movieResponse.optString("backdrop_path");
+       movie= new Movie(title,img,overview,release_date, Float.parseFloat(avgRating), backDropImage, id);
+            Log.v("JSONUtils", "Read one movie JSON array ");
+
+
+        } catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+    return movie;
+    }
     public static ArrayList<Trailer> parseTrailerJson(String response){
         try{
             movieTrailers=new ArrayList<>();

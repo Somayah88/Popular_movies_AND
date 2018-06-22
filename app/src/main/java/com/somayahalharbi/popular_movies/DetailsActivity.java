@@ -1,18 +1,23 @@
 package com.somayahalharbi.popular_movies;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.somayahalharbi.popular_movies.adapters.ReviewAdapter;
 import com.somayahalharbi.popular_movies.adapters.TrailerAdapter;
+import com.somayahalharbi.popular_movies.data.MovieContract;
 import com.somayahalharbi.popular_movies.models.Movie;
 import com.somayahalharbi.popular_movies.models.Review;
 import com.somayahalharbi.popular_movies.models.Trailer;
@@ -28,6 +33,8 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+//TODO: save the app state and change the AsycTask to loaders
 
 public class DetailsActivity extends AppCompatActivity implements TrailerAdapter.TrailerAdapterOnClickHandler{
 
@@ -45,6 +52,8 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
     RecyclerView videoRecyclerView;
     @BindView(R.id.reviews_recycler_view)
     RecyclerView reviewsRecyclerView;
+    @BindView(R.id.button_favorite)
+    ToggleButton mFavoriteButton;
     TrailerAdapter trailerAdapter;
     ReviewAdapter reviewAdapter;
 
@@ -65,15 +74,16 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
         if (intent == null) {
             closeOnError();
         }
-        Bundle movieData = getIntent().getExtras();
+        final Bundle movieData = getIntent().getExtras();
         if (movieData != null) {
-            Movie movie = movieData.getParcelable("movie");
+             Movie movie = movieData.getParcelable("movie");
             if (movie != null) {
                 this.setTitle(movie.getTitle());
                 showDetails(movie);
             } else {
                 closeOnError();
             }
+
         }
         else
         {
@@ -81,7 +91,7 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
         }
     }
 
-    private void showDetails(Movie movie) {
+    private void showDetails(final Movie movie) {
 
         mOverviewTextView.setText(movie.getOverview());
         mRatingTextView.setText(String.format(Locale.US,"%.1f/10",movie.getRating()));
@@ -90,6 +100,30 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
         Picasso.with(this).load("http://image.tmdb.org/t/p/w185/" + movie.getImage()).into(mMoviePosterImageView);
         showTrailers(movie.getId());
         showReviews(movie.getId());
+        Cursor cursor= getContentResolver().query(MovieContract.FavoritMoviesEntry.CONTENT_URI, null, MovieContract.FavoritMoviesEntry.COLUMN_MOVIE_ID+ " = " + movie.getId(),null, null);
+if(cursor.getCount()>1)
+{
+    mFavoriteButton.setChecked(true);
+}
+else
+    mFavoriteButton.setChecked(false);
+        mFavoriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Cursor cursor= getContentResolver().query(MovieContract.FavoritMoviesEntry.CONTENT_URI, null, MovieContract.FavoritMoviesEntry.COLUMN_MOVIE_ID+ " = " + movie.getId(),null, null);
+                    if(cursor.getCount()<1)
+                    {
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(MovieContract.FavoritMoviesEntry.COLUMN_MOVIE_ID, movie.getId());
+                    contentValues.put(MovieContract.FavoritMoviesEntry.COLUMN_NAME, movie.getTitle());
+                    Uri uri = getContentResolver().insert(MovieContract.FavoritMoviesEntry.CONTENT_URI, contentValues);
+                    }
+                } else {
+                    Uri uri=MovieContract.FavoritMoviesEntry.CONTENT_URI.buildUpon().appendPath(movie.getId()).build();
+                    getContentResolver().delete(uri, null, null);
+                }
+            }
+        });
 
 
     }

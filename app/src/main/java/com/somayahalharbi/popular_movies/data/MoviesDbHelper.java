@@ -23,7 +23,7 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         final String CREATE_TABLE="create table "+ FavoritMoviesEntry.TABLE_NAME+" ( "+
                 FavoritMoviesEntry._ID+" INTEGER PRIMARY KEY, "+
-                FavoritMoviesEntry.COLUMN_MOVIE_ID+  "TEXT NOT NULL,"+
+                FavoritMoviesEntry.COLUMN_MOVIE_ID+  " TEXT NOT NULL, "+
                 FavoritMoviesEntry.COLUMN_NAME+" TEXT NOT NULL );";
         db.execSQL(CREATE_TABLE);
 
