@@ -47,7 +47,6 @@ public class JSONUtils {
         {
             e.printStackTrace();
         }
-        Log.v("JSONUtils", "Read the movie JSON array "+ moviesList.size());
 
         return moviesList;
     }

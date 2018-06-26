@@ -42,7 +42,7 @@ import butterknife.ButterKnife;
 
 import static com.somayahalharbi.popular_movies.MainActivity.MOVIE_DB_QUERY_URL;
 
-//TODO: save the app state and change the AsycTask to loaders
+//TODO: save the app state
 
 public class DetailsActivity extends AppCompatActivity implements TrailerAdapter.TrailerAdapterOnClickHandler, LoaderManager.LoaderCallbacks {
 
@@ -229,99 +229,6 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
             trailerAdapter.clear();
 
     }
-    /*private static class TrailersApiQuery extends AsyncTask<URL, Void, String> {
-        private final WeakReference<DetailsActivity> detailActivityReference;
 
-        TrailersApiQuery(DetailsActivity context) {
-            detailActivityReference = new WeakReference<>(context);
-        }
-
-
-        @Override
-        protected String doInBackground(URL... urls) {
-            if (urls.length == 0)
-                return null;
-            URL queryURL = urls[0];
-            String trailersResults = null;
-            try {
-                trailersResults = NetworkUtils.getResponseFromHttpUrl(queryURL);
-                return trailersResults;
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            DetailsActivity activity = detailActivityReference.get();
-            if (activity == null || activity.isFinishing()) return;
-        }
-
-        @Override
-        protected void onPostExecute(String trailerResult) {
-            super.onPostExecute(trailerResult);
-           DetailsActivity activity = detailActivityReference.get();
-            if (activity == null || activity.isFinishing()) return;
-            if (!trailerResult.equals("") && !trailerResult.isEmpty()) {
-                ArrayList<Trailer> trailers = JSONUtils.parseTrailerJson(trailerResult);
-                activity.trailerAdapter.setTrailersData(trailers);
-                activity.videoRecyclerView.setAdapter(activity.trailerAdapter);
-            }
-
-
-        }
-    }*/
-    /*private static class ReviewsApiQuery extends AsyncTask<URL, Void, String> {
-        private final WeakReference<DetailsActivity> detailActivityReference;
-
-        ReviewsApiQuery(DetailsActivity context) {
-            detailActivityReference = new WeakReference<>(context);
-        }
-
-
-        @Override
-        protected String doInBackground(URL... urls) {
-            if (urls.length == 0)
-                return null;
-            URL queryURL = urls[0];
-            String reviewsResults = null;
-            try {
-                reviewsResults = NetworkUtils.getResponseFromHttpUrl(queryURL);
-                return reviewsResults;
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            DetailsActivity activity = detailActivityReference.get();
-            if (activity == null || activity.isFinishing()) return;
-        }
-
-        @Override
-        protected void onPostExecute(String reviewResult) {
-            super.onPostExecute(reviewResult);
-            DetailsActivity activity = detailActivityReference.get();
-            if (activity == null || activity.isFinishing()) return;
-            if (!reviewResult.equals("") && !reviewResult.isEmpty()) {
-                ArrayList<Review> reviews = JSONUtils.parseReviewJson(reviewResult);
-                activity.reviewAdapter.setReviewsData(reviews);
-                activity.reviewsRecyclerView.setAdapter(activity.reviewAdapter);
-            }
-
-
-        }*/
-    // }
 
 }

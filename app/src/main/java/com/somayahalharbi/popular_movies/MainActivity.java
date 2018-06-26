@@ -35,7 +35,6 @@ import butterknife.ButterKnife;
 
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler, LoaderManager.LoaderCallbacks{
-//TODO: save the app state with orientation
 
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
@@ -50,11 +49,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     public static final int FAVORITE_MOVIES_LOADER=70;
     private URL queryURl;
     String  apiKey;
-
     private static final String MOVIES_STATE = "movies_state";
     private static final String SAVED_RECYCLERVIEW_STATUS="saved_recyclerview_statues";
     private ArrayList<Movie> savedMovies;
     private Parcelable movieList;
+    private Bundle savedRecyclerViewBundle;
 
 
 
@@ -78,13 +77,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mMovieAdapter = new MovieAdapter(this);
         mRecyclerView.setAdapter(mMovieAdapter);
-        getSupportLoaderManager().initLoader(MOVIE_DB_LOADER, null, this);
+       // getSupportLoaderManager().initLoader(MOVIE_DB_LOADER, null, this);
         if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_RECYCLERVIEW_STATUS)) {
-            movieList = savedInstanceState.getParcelable(SAVED_RECYCLERVIEW_STATUS);
-            mRecyclerView.getLayoutManager().onRestoreInstanceState(movieList);
+            savedMovies=savedInstanceState.getParcelableArrayList(MOVIES_STATE);
+            mMovieAdapter.setMovieData(savedMovies);
+            mRecyclerView.setAdapter(mMovieAdapter);
         }
-
-        loadMovieData(sortType);
+        else
+            loadMovieData(sortType);
 
 
     }
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         super.onSaveInstanceState(outState);
         movieList=mRecyclerView.getLayoutManager().onSaveInstanceState();
         outState.putParcelable(SAVED_RECYCLERVIEW_STATUS, movieList);
-        //outState.putParcelableArrayList(MOVIES_STATE, savedMovies);
+        outState.putParcelableArrayList(MOVIES_STATE, savedMovies);
 
 
     }
@@ -146,9 +146,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     public void onRestoreInstanceState(Bundle inState){
         super.onRestoreInstanceState(inState);
 
-        if(inState!=null)
-            movieList=inState.getParcelable(SAVED_RECYCLERVIEW_STATUS);
-           // savedMovies=inState.getParcelableArrayList(MOVIES_STATE);
+        if(inState!=null) {
+            movieList = inState.getParcelable(SAVED_RECYCLERVIEW_STATUS);
+            savedMovies = inState.getParcelableArrayList(MOVIES_STATE);
+        }
     }
     @Override
     protected void onResume() {
@@ -157,12 +158,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         if (movieList != null) {
            mRecyclerView.getLayoutManager().onRestoreInstanceState(movieList);
         }
+
     }
     @Override
     protected void onPause()
     {
         super.onPause();
-        movieList= mRecyclerView.getLayoutManager().onSaveInstanceState();
+        movieList=mRecyclerView.getLayoutManager().onSaveInstanceState();
 
     }
 
@@ -201,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             if (id == MOVIE_DB_LOADER) {
                 if ( moviesResult!=null) {
                     movies = parseOneString((String) moviesResult);
-                    savedMovies = parseOneString((String) moviesResult);
+                    //savedMovies = parseOneString((String) moviesResult);
                 }
                 else
                     showErrorMessages();
@@ -209,16 +211,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
             }
             if (id == FAVORITE_MOVIES_LOADER) {
-                if(moviesResult!=null)
+                if(moviesResult!=null) {
 
-                movies = parseMultipleStrings((ArrayList<String>) moviesResult);
+                    movies = parseMultipleStrings((ArrayList<String>) moviesResult);
+                }
                 else
                 {
                     showNoFavoriteMovies();
                 }
 
             }
-
+            savedMovies=movies;
             mMovieAdapter.setMovieData(movies);
             mRecyclerView.setAdapter(mMovieAdapter);
         }
