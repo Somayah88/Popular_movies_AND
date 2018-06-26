@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.somayahalharbi.popular_movies.adapters.MovieAdapter;
 import com.somayahalharbi.popular_movies.interfaces.AsyncTaskListener;
 import com.somayahalharbi.popular_movies.models.Movie;
@@ -34,7 +35,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler, LoaderManager.LoaderCallbacks{
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler, LoaderManager.LoaderCallbacks {
 
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
@@ -44,18 +45,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     TextView mErrorMessage;
     private MovieAdapter mMovieAdapter;
     private String sortType = "popular";
-    public static final int MOVIE_DB_LOADER=50;
-    public static final String MOVIE_DB_QUERY_URL="URL_FOR_MOVIE_DB_QUERY";
-    public static final int FAVORITE_MOVIES_LOADER=70;
+    public static final int MOVIE_DB_LOADER = 50;
+    public static final String MOVIE_DB_QUERY_URL = "URL_FOR_MOVIE_DB_QUERY";
+    public static final int FAVORITE_MOVIES_LOADER = 70;
     private URL queryURl;
-    String  apiKey;
+    String apiKey;
     private static final String MOVIES_STATE = "movies_state";
-    private static final String SAVED_RECYCLERVIEW_STATUS="saved_recyclerview_statues";
+    private static final String SAVED_RECYCLERVIEW_STATUS = "saved_recyclerview_statues";
     private ArrayList<Movie> savedMovies;
     private Parcelable movieList;
-    private Bundle savedRecyclerViewBundle;
-
-
 
 
     @Override
@@ -77,13 +75,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mMovieAdapter = new MovieAdapter(this);
         mRecyclerView.setAdapter(mMovieAdapter);
-       // getSupportLoaderManager().initLoader(MOVIE_DB_LOADER, null, this);
         if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_RECYCLERVIEW_STATUS)) {
-            savedMovies=savedInstanceState.getParcelableArrayList(MOVIES_STATE);
+            savedMovies = savedInstanceState.getParcelableArrayList(MOVIES_STATE);
             mMovieAdapter.setMovieData(savedMovies);
             mRecyclerView.setAdapter(mMovieAdapter);
-        }
-        else
+        } else
             loadMovieData(sortType);
 
 
@@ -91,30 +87,28 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
 
     private void loadMovieData(String sortBy) {
-         apiKey = this.getResources().getString(R.string.api_key);
+        apiKey = this.getResources().getString(R.string.api_key);
         LoaderManager loaderManager = getSupportLoaderManager();
         if (isOnline()) {
-            if(sortBy.equals("favorite")){
+            if (sortBy.equals("favorite")) {
                 Loader loader = loaderManager.getLoader(FAVORITE_MOVIES_LOADER);
-                if(loader==null){
+                if (loader == null) {
                     loaderManager.initLoader(FAVORITE_MOVIES_LOADER, null, this);
-                }else{
+                } else {
                     loaderManager.restartLoader(FAVORITE_MOVIES_LOADER, null, this);
                 }
 
-            }
-            else {
+            } else {
                 queryURl = NetworkUtils.buildURL(sortBy, apiKey);
-                Bundle bundle=new Bundle();
-                bundle.putString (MOVIE_DB_QUERY_URL, queryURl.toString());
+                Bundle bundle = new Bundle();
+                bundle.putString(MOVIE_DB_QUERY_URL, queryURl.toString());
                 Loader loader = loaderManager.getLoader(MOVIE_DB_LOADER);
-                if(loader==null){
+                if (loader == null) {
                     loaderManager.initLoader(MOVIE_DB_LOADER, bundle, this);
-                }else{
+                } else {
                     loaderManager.restartLoader(MOVIE_DB_LOADER, bundle, this);
                 }
             }
-
 
 
         } else {
@@ -133,56 +127,55 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         startActivity(intentToStartDetailActivity);
 
     }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        movieList=mRecyclerView.getLayoutManager().onSaveInstanceState();
+        movieList = mRecyclerView.getLayoutManager().onSaveInstanceState();
         outState.putParcelable(SAVED_RECYCLERVIEW_STATUS, movieList);
         outState.putParcelableArrayList(MOVIES_STATE, savedMovies);
 
 
     }
+
     @Override
-    public void onRestoreInstanceState(Bundle inState){
+    public void onRestoreInstanceState(Bundle inState) {
         super.onRestoreInstanceState(inState);
 
-        if(inState!=null) {
+        if (inState != null) {
             movieList = inState.getParcelable(SAVED_RECYCLERVIEW_STATUS);
             savedMovies = inState.getParcelableArrayList(MOVIES_STATE);
         }
     }
+
     @Override
     protected void onResume() {
         super.onResume();
 
         if (movieList != null) {
-           mRecyclerView.getLayoutManager().onRestoreInstanceState(movieList);
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(movieList);
         }
 
     }
+
     @Override
-    protected void onPause()
-    {
+    protected void onPause() {
         super.onPause();
-        movieList=mRecyclerView.getLayoutManager().onSaveInstanceState();
+        movieList = mRecyclerView.getLayoutManager().onSaveInstanceState();
 
     }
 
 
-
-
-
     @Override
-    public  Loader onCreateLoader(int id, final Bundle args) {
-        if(id==MOVIE_DB_LOADER) {
-            return new MoviesAsyncTaskLoader(this, args,new AsyncTaskListener<String>() {
+    public Loader onCreateLoader(int id, final Bundle args) {
+        if (id == MOVIE_DB_LOADER) {
+            return new MoviesAsyncTaskLoader(this, args, new AsyncTaskListener<String>() {
                 @Override
                 public void onTaskComplete(String result) {
 
                 }
             });
-        }
-       else if(id==FAVORITE_MOVIES_LOADER){
+        } else if (id == FAVORITE_MOVIES_LOADER) {
             return new FavoriteMoviesAsyncTaskLoader(this, new AsyncTaskListener<ArrayList<String>>() {
                 @Override
                 public void onTaskComplete(ArrayList<String> result) {
@@ -190,41 +183,38 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 }
             });
 
-                }
-                return null;
+        }
+        return null;
     }
 
     @Override
     public void onLoadFinished(Loader loader, Object moviesResult) {
-        int id=loader.getId();
-        ArrayList<Movie> movies=new ArrayList<>();
+        int id = loader.getId();
+        ArrayList<Movie> movies = new ArrayList<>();
         showData();
 
-            if (id == MOVIE_DB_LOADER) {
-                if ( moviesResult!=null) {
-                    movies = parseOneString((String) moviesResult);
-                    //savedMovies = parseOneString((String) moviesResult);
-                }
-                else
-                    showErrorMessages();
+        if (id == MOVIE_DB_LOADER) {
+            if (moviesResult != null) {
+                movies = parseOneString((String) moviesResult);
+                //savedMovies = parseOneString((String) moviesResult);
+            } else
+                showErrorMessages();
 
 
-            }
-            if (id == FAVORITE_MOVIES_LOADER) {
-                if(moviesResult!=null) {
-
-                    movies = parseMultipleStrings((ArrayList<String>) moviesResult);
-                }
-                else
-                {
-                    showNoFavoriteMovies();
-                }
-
-            }
-            savedMovies=movies;
-            mMovieAdapter.setMovieData(movies);
-            mRecyclerView.setAdapter(mMovieAdapter);
         }
+        if (id == FAVORITE_MOVIES_LOADER) {
+            if (moviesResult != null) {
+
+                movies = parseMultipleStrings((ArrayList<String>) moviesResult);
+            } else {
+                showNoFavoriteMovies();
+            }
+
+        }
+        savedMovies = movies;
+        mMovieAdapter.setMovieData(movies);
+        mRecyclerView.setAdapter(mMovieAdapter);
+    }
 
 
     @Override
@@ -232,19 +222,21 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mMovieAdapter.clear();
 
     }
-    public ArrayList<Movie> parseOneString(String data)
-    { ArrayList<Movie> movies=new ArrayList<>();
-        if ( !data.equals("") && !data.isEmpty()) {
+
+    public ArrayList<Movie> parseOneString(String data) {
+        ArrayList<Movie> movies = new ArrayList<>();
+        if (!data.equals("") && !data.isEmpty()) {
             movies = JSONUtils.parseMovieJson(data.toString());
         }
-       return movies;
+        return movies;
     }
+
     public ArrayList<Movie> parseMultipleStrings(ArrayList<String> data) {
         ArrayList<Movie> movies = new ArrayList<>();
         if (data.size() != 0 && data != null) {
             for (int i = 0; i < data.size(); i++) {
-                Movie temp=JSONUtils.parseOneMovie(data.get(i));
-               movies.add(temp);
+                Movie temp = JSONUtils.parseOneMovie(data.get(i));
+                movies.add(temp);
 
             }
         }
@@ -275,9 +267,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             loadMovieData(sortType);
             return true;
         }
-        if (id== R.id.favorite)
-        {
-            sortType="favorite";
+        if (id == R.id.favorite) {
+            sortType = "favorite";
             mMovieAdapter.clear();
             loadMovieData(sortType);
             return true;
@@ -309,7 +300,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
 
     }
-    private void showNoFavoriteMovies(){
+
+    private void showNoFavoriteMovies() {
         mRecyclerView.setVisibility(View.GONE);
         Toast.makeText(this, this.getResources().getString(R.string.empty_favorite), Toast.LENGTH_LONG).show();
         mErrorMessage.setVisibility(View.VISIBLE);

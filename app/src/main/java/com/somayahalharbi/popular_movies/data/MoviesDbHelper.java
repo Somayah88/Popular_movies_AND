@@ -4,7 +4,7 @@ package com.somayahalharbi.popular_movies.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import com.somayahalharbi.popular_movies.data.MovieContract.FavoritMoviesEntry;
+import com.somayahalharbi.popular_movies.data.MovieContract.FavoriteMoviesEntry;
 
 
 public class MoviesDbHelper extends SQLiteOpenHelper {
@@ -21,10 +21,10 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        final String CREATE_TABLE="create table "+ FavoritMoviesEntry.TABLE_NAME+" ( "+
-                FavoritMoviesEntry._ID+" INTEGER PRIMARY KEY, "+
-                FavoritMoviesEntry.COLUMN_MOVIE_ID+  " TEXT NOT NULL, "+
-                FavoritMoviesEntry.COLUMN_NAME+" TEXT NOT NULL );";
+        final String CREATE_TABLE="create table "+ FavoriteMoviesEntry.TABLE_NAME+" ( "+
+                FavoriteMoviesEntry._ID+" INTEGER PRIMARY KEY, "+
+                FavoriteMoviesEntry.COLUMN_MOVIE_ID+  " TEXT NOT NULL, "+
+                FavoriteMoviesEntry.COLUMN_NAME+" TEXT NOT NULL );";
         db.execSQL(CREATE_TABLE);
 
 
@@ -34,7 +34,7 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + FavoritMoviesEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + FavoriteMoviesEntry.TABLE_NAME);
         onCreate(db);
 
     }

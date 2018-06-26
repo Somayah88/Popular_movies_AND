@@ -4,9 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -30,19 +28,14 @@ import com.somayahalharbi.popular_movies.utilities.JSONUtils;
 import com.somayahalharbi.popular_movies.utilities.MoviesAsyncTaskLoader;
 import com.somayahalharbi.popular_movies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
-
-import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.somayahalharbi.popular_movies.MainActivity.MOVIE_DB_QUERY_URL;
 
-//TODO: save the app state
 
 public class DetailsActivity extends AppCompatActivity implements TrailerAdapter.TrailerAdapterOnClickHandler, LoaderManager.LoaderCallbacks {
 
@@ -66,6 +59,11 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
     ReviewAdapter reviewAdapter;
     private static final int REVIEW_LOADER_ID = 40;
     private static final int TRAILERS_LOADER_ID = 30;
+    Parcelable reviewList;
+    Parcelable trailerList;
+    private static final String TRAILER_SAVED_STATE = "trailers_state";
+    private static final String REVIEWS_SAVED_STATE = "reviews_state";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +78,6 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
         reviewsRecyclerView.setLayoutManager(reviewLayoutManager);
         reviewAdapter = new ReviewAdapter();
         reviewsRecyclerView.setAdapter(reviewAdapter);
-        getSupportLoaderManager().initLoader(REVIEW_LOADER_ID, null, this);
-        getSupportLoaderManager().initLoader(TRAILERS_LOADER_ID, null, this);
         Intent intent = getIntent();
         if (intent == null) {
             closeOnError();
@@ -101,7 +97,6 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
         }
 
 
-
     }
 
     private void showDetails(final Movie movie) {
@@ -111,9 +106,7 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
         mReleaseDateTextView.setText(movie.getRelease_date());
         Picasso.with(this).load("http://image.tmdb.org/t/p/w500/" + movie.getBackDropImg()).into(mMovieImageView);
         Picasso.with(this).load("http://image.tmdb.org/t/p/w185/" + movie.getImage()).into(mMoviePosterImageView);
-
-        Cursor cursor = getContentResolver().query(MovieContract.FavoritMoviesEntry.CONTENT_URI, null, MovieContract.FavoritMoviesEntry.COLUMN_MOVIE_ID + " = " + movie.getId(), null, null);
-
+        Cursor cursor = getContentResolver().query(MovieContract.FavoriteMoviesEntry.CONTENT_URI, null, MovieContract.FavoriteMoviesEntry.COLUMN_MOVIE_ID + " = " + movie.getId(), null, null);
         if (cursor.getCount() > 0) {
             mFavoriteButton.setChecked(true);
         } else
@@ -122,15 +115,15 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
         mFavoriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Cursor cursor = getContentResolver().query(MovieContract.FavoritMoviesEntry.CONTENT_URI, null, MovieContract.FavoritMoviesEntry.COLUMN_MOVIE_ID + " = " + movie.getId(), null, null);
+                    Cursor cursor = getContentResolver().query(MovieContract.FavoriteMoviesEntry.CONTENT_URI, null, MovieContract.FavoriteMoviesEntry.COLUMN_MOVIE_ID + " = " + movie.getId(), null, null);
                     if (cursor.getCount() < 1) {
                         ContentValues contentValues = new ContentValues();
-                        contentValues.put(MovieContract.FavoritMoviesEntry.COLUMN_MOVIE_ID, movie.getId());
-                        contentValues.put(MovieContract.FavoritMoviesEntry.COLUMN_NAME, movie.getTitle());
-                        Uri uri = getContentResolver().insert(MovieContract.FavoritMoviesEntry.CONTENT_URI, contentValues);
+                        contentValues.put(MovieContract.FavoriteMoviesEntry.COLUMN_MOVIE_ID, movie.getId());
+                        contentValues.put(MovieContract.FavoriteMoviesEntry.COLUMN_NAME, movie.getTitle());
+                        Uri uri = getContentResolver().insert(MovieContract.FavoriteMoviesEntry.CONTENT_URI, contentValues);
                     }
                 } else {
-                    Uri uri = MovieContract.FavoritMoviesEntry.CONTENT_URI.buildUpon().appendPath(movie.getId()).build();
+                    Uri uri = MovieContract.FavoriteMoviesEntry.CONTENT_URI.buildUpon().appendPath(movie.getId()).build();
                     getContentResolver().delete(uri, null, null);
                 }
             }
@@ -184,9 +177,52 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (reviewList != null) {
+            reviewsRecyclerView.getLayoutManager().onRestoreInstanceState(reviewList);
+
+        }
+        if (trailerList != null) {
+            videoRecyclerView.getLayoutManager().onRestoreInstanceState(trailerList);
+        }
+
+    }
 
     @Override
-    public Loader onCreateLoader(int id,  Bundle args) {
+    protected void onPause() {
+        super.onPause();
+        reviewList = reviewsRecyclerView.getLayoutManager().onSaveInstanceState();
+        trailerList = videoRecyclerView.getLayoutManager().onSaveInstanceState();
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        trailerList = videoRecyclerView.getLayoutManager().onSaveInstanceState();
+        outState.putParcelable(TRAILER_SAVED_STATE, trailerList);
+        reviewList = reviewsRecyclerView.getLayoutManager().onSaveInstanceState();
+        outState.putParcelable(REVIEWS_SAVED_STATE, reviewList);
+
+
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle inState) {
+        super.onRestoreInstanceState(inState);
+
+        if (inState != null) {
+            reviewList = inState.getParcelable(REVIEWS_SAVED_STATE);
+            trailerList = inState.getParcelable(TRAILER_SAVED_STATE);
+        }
+    }
+
+
+    @Override
+    public Loader onCreateLoader(int id, Bundle args) {
         if (id == REVIEW_LOADER_ID || id == TRAILERS_LOADER_ID)
             return new MoviesAsyncTaskLoader(this, args, new AsyncTaskListener<String>() {
                 @Override
@@ -198,11 +234,11 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
     }
 
     @Override
-    public void onLoadFinished( Loader loader, Object data) {
+    public void onLoadFinished(Loader loader, Object data) {
         int id = loader.getId();
 
         if (id == REVIEW_LOADER_ID) {
-            if(!data.equals("") && data!=null ) {
+            if (!data.equals("") && data != null) {
                 ArrayList<Review> reviews = JSONUtils.parseReviewJson((String) data);
                 reviewAdapter.setReviewsData(reviews);
                 reviewsRecyclerView.setAdapter(reviewAdapter);
@@ -211,7 +247,7 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
 
         }
         if (id == TRAILERS_LOADER_ID) {
-            if(!data.equals("") && data!=null ) {
+            if (!data.equals("") && data != null) {
                 ArrayList<Trailer> trailers = JSONUtils.parseTrailerJson((String) data);
                 trailerAdapter.setTrailersData(trailers);
                 videoRecyclerView.setAdapter(trailerAdapter);
@@ -222,10 +258,10 @@ public class DetailsActivity extends AppCompatActivity implements TrailerAdapter
     }
 
     @Override
-    public void onLoaderReset( Loader loader) {
-        if(loader.getId()==REVIEW_LOADER_ID)
+    public void onLoaderReset(Loader loader) {
+        if (loader.getId() == REVIEW_LOADER_ID)
             reviewAdapter.clear();
-        if(loader.getId()==TRAILERS_LOADER_ID)
+        if (loader.getId() == TRAILERS_LOADER_ID)
             trailerAdapter.clear();
 
     }

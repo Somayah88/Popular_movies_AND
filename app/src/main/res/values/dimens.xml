@@ -16,4 +16,7 @@
     <dimen name="textViews_margin_top">16dp</dimen>
     <dimen name="poster_margin">32dp</dimen>
     <dimen name="poster_margin_top">42dp</dimen>
+    <dimen name="toggle_button_dimen">42dp</dimen>
+    <dimen name="toggle_button_top_margin">24dp</dimen>
+
 </resources>

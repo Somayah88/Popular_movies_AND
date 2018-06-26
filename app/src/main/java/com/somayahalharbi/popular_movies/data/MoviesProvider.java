@@ -11,9 +11,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.somayahalharbi.popular_movies.data.MovieContract.FavoritMoviesEntry;
+import com.somayahalharbi.popular_movies.data.MovieContract.FavoriteMoviesEntry;
 
-import static com.somayahalharbi.popular_movies.data.MovieContract.FavoritMoviesEntry.TABLE_NAME;
+import static com.somayahalharbi.popular_movies.data.MovieContract.FavoriteMoviesEntry.TABLE_NAME;
 
 
 public class MoviesProvider extends ContentProvider{
@@ -83,7 +83,7 @@ public class MoviesProvider extends ContentProvider{
             case FAVORITE:
                 long id = db.insert(TABLE_NAME, null, values);
                 if (id > 0) {
-                    returnUri = ContentUris.withAppendedId(FavoritMoviesEntry.CONTENT_URI, id);
+                    returnUri = ContentUris.withAppendedId(FavoriteMoviesEntry.CONTENT_URI, id);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
@@ -110,7 +110,7 @@ public class MoviesProvider extends ContentProvider{
         switch (match) {
             case FAVORITE_WITH_ID:
                 String id = uri.getPathSegments().get(1);
-                movieDeleted = db.delete(TABLE_NAME, FavoritMoviesEntry.COLUMN_MOVIE_ID+ "=?", new String[]{id});
+                movieDeleted = db.delete(TABLE_NAME, FavoriteMoviesEntry.COLUMN_MOVIE_ID+ "=?", new String[]{id});
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

@@ -14,7 +14,7 @@ public class MovieContract {
 
     public static final String PATH_FAVORITES = "favorites";
 
-    public static final class FavoritMoviesEntry implements BaseColumns{
+    public static final class FavoriteMoviesEntry implements BaseColumns{
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_FAVORITES).build();

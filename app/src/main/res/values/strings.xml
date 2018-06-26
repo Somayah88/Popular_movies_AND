@@ -15,6 +15,8 @@
     <string name="releaseDate_title">Release Date: </string>
     <string name="video_title">Video Title is Not Available</string>
     <string name="not_available">N/A</string>
+    <string name="trailers_label">Trailers</string>
+    <string name="reviews_label">Reviews </string>
 
 
     <!-- Error Messages -->

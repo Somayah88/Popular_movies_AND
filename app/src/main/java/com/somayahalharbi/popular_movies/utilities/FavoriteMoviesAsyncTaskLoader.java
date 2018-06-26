@@ -39,14 +39,14 @@ public class FavoriteMoviesAsyncTaskLoader extends AsyncTaskLoader<ArrayList<Str
     public ArrayList<String> loadInBackground() {
         ArrayList<String> moviesResults = new ArrayList();
         Context context=getContext();
-        Cursor cursor=context.getContentResolver().query(MovieContract.FavoritMoviesEntry.CONTENT_URI,null,null,null,null);
+        Cursor cursor=context.getContentResolver().query(MovieContract.FavoriteMoviesEntry.CONTENT_URI,null,null,null,null);
         if(cursor.getCount()<1){
             return null;
         }else {
             try {
                 cursor.moveToFirst();
                 do{
-                    URL url=NetworkUtils.buildURL(cursor.getString(cursor.getColumnIndex(MovieContract.FavoritMoviesEntry.COLUMN_MOVIE_ID)),
+                    URL url=NetworkUtils.buildURL(cursor.getString(cursor.getColumnIndex(MovieContract.FavoriteMoviesEntry.COLUMN_MOVIE_ID)),
 
                             context.getResources().getString(R.string.api_key));
                     moviesResults.add(NetworkUtils.getResponseFromHttpUrl(url));
