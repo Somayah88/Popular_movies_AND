@@ -152,19 +152,19 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     protected void onResume() {
         super.onResume();
 
+        if(sortType.equalsIgnoreCase("favorite") ){
+            mMovieAdapter.clear();
+            loadMovieData(sortType);
+
+        }
+
         if (movieList != null) {
             mRecyclerView.getLayoutManager().onRestoreInstanceState(movieList);
         }
 
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        movieList = mRecyclerView.getLayoutManager().onSaveInstanceState();
-
-    }
-
+    
 
     @Override
     public Loader onCreateLoader(int id, final Bundle args) {
