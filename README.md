@@ -1,4 +1,4 @@
-
+# Popular Movies 
 ## Project Overview
  I built this app as a part of Udacity Android Developer Nanodegree. This app allows users to discover the most popular movies playing. It fetches the data from TheMovieDB api.
  
