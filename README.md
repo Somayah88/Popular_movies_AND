@@ -29,9 +29,8 @@ The sort order can be by most popular, highest-rated or the user favorites
  - I used libraries to simplify the amount of code I wrote
 
  **In order to use your API key please create a resource file under the values folder and insert the following code:** 
- 
-```<?xml version="1.0" encoding="utf-8"?> 
-  <resources>
-<string name="api_key">[ YOUR API KEY ]</string>
- </resources>
+ ```<?xml version="1.0" encoding="utf-8"?> 
+    <resources>
+   <string name="api_key">[ YOUR API KEY ]</string>
+   </resources>
 
